@@ -1,9 +1,21 @@
+import {useEffect}  from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import styles from '../../styles/Home.module.css'
+import { useSelector } from 'react-redux'
+import { setProfileData, selectProfile, getApi } from '../slices/profile';
 
-const Home: NextPage = () => {
+import { wrapper } from '../store'
+
+const Home: NextPage = (props: any) => {
+
+  const state  = useSelector(selectProfile);
+
+
+
+  const {resolvedUrl}= props
+  console.log(resolvedUrl)
   return (
     <div className={styles.container}>
       <Head>
@@ -16,7 +28,7 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
-
+        <h2>Redux Data{state.name}</h2>
         <p className={styles.description}>
           Get started by editing{' '}
           <code className={styles.code}>pages/index.tsx</code>
@@ -68,5 +80,16 @@ const Home: NextPage = () => {
     </div>
   )
 }
+
+
+export const getServerSideProps = wrapper.getServerSideProps(store => async(context)=>{
+  const {resolvedUrl} = context
+  store.dispatch(setProfileData('My Server Name'))
+  return{
+    props:{
+      resolvedUrl
+    }
+  }
+})
 
 export default Home
